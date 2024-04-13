@@ -25,8 +25,17 @@ export const getProduct = async (req, res) => {
 }
 
 export const getAllProduct = async (req, res) => {
+    const q = req.query;
+
+    const filters = {
+        ...(q.userid && { userId: q.userid }),
+        ...(q.name && { name: { $regex: q.name, $options: "i" } }),
+        ...(q.type && { type: q.type }),
+        ...(q.symbol && { symbol: q.symbol }),
+    };
+
     try {
-        const products = await ProductModel.find();
+        const products = await ProductModel.find(filters);
         res.status(200).json(products)
     } catch (error) {
         res.status(500).json(error.message)

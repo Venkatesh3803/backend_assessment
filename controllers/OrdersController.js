@@ -8,14 +8,14 @@ export const createOrder = async (req, res) => {
     try {
         const newOrder = await orderModel(req.body);
         const currUser = await UserModel.findById(userId)
+        const alreadyExistOrder = await orderModel.findOne({ userId: newOrder.userId, product: newOrder.product, type: newOrder.type });
 
-        const alreadyExistOrderBuy = await orderModel.findOne({ userId: newOrder.userId, product: newOrder.product, type: newOrder.type });
         if (currUser.balance < price) return res.status(401).json("Insuffient Balance")
 
-        if (alreadyExistOrderBuy) {
+        if (alreadyExistOrder) {
             let reduceAmount = currUser.balance - price;
-            let updatedPrice = alreadyExistOrderBuy.price + price
-            let updatedQty = alreadyExistOrderBuy.quantity + req.body.quantity;
+            let updatedPrice = alreadyExistOrder.price + price
+            let updatedQty = alreadyExistOrder.quantity + req.body.quantity;
             await UserModel.updateOne({ balance: reduceAmount })
             await orderModel.updateOne({ price: updatedPrice, quantity: updatedQty })
 

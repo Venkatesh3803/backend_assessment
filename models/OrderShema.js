@@ -14,7 +14,7 @@ const orderShema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['Buy', 'Sell'],
+        enum: ['Buy', "Sell"],
         required: true
     },
     quantity: {
